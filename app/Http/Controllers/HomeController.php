@@ -46,6 +46,14 @@ class HomeController extends Controller
             return response()->json(['code' => 1, 'data' => $validator->errors()]);
         }
 
+        $data['user_id'] = Auth::id();
+
+        $data['is_necessary'] = $data['is_necessary'] ? 1 : 0;
+        $data['category_id'] = $data['category'];
+        $data['comment'] = $data['comment'] ?: "";
+
+        Pocket::create($data);
+
         return response()->json(['code' => 0]);
     }
 }
