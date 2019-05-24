@@ -20,6 +20,7 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     Route::get('/home', 'HomeController@index')->name('home');
     Route::post('/store', 'HomeController@store')->name('pocket.store');
 });
