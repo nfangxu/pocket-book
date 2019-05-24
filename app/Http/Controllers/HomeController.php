@@ -3,26 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Pocket;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Category;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function index(Request $request)
     {
-        $this->middleware('auth');
+        $query = Pocket::latest('id')
+            ->whereUserId(Auth::id());
+
+        if (request('category')) {
+            $query->whereCategoryId(request('category'));
+        }
+
+        $pockets = $query->paginate(10);
+        $categories = Category::all();
+
+        return view('home', compact(['pockets', 'categories']));
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
+    public function store(Request $request)
     {
-        return view('home');
+        $data = $request->only(['category', 'comment', 'expenditure', 'expenditure_date', 'is_necessary']);
+
+        $validator = Validator::make($data, [
+            'category' => ['required'],
+            'expenditure' => ['required'],
+            'expenditure_date' => ['required'],
+        ], [
+            '*.required' =>  ':attribute不能为空',
+        ], [
+            'category' => '类别',
+            'comment' => '备注',
+            'expenditure' => '金额',
+            'expenditure_date' => '日期',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['code' => 1, 'data' => $validator->errors()]);
+        }
+
+        return response()->json(['code' => 0]);
     }
 }
