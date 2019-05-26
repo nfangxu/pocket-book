@@ -23,7 +23,7 @@ class Pocket extends Model
 
     public function scopeDatepicker(Builder $builder, $start, $end)
     {
-        return $builder->where('expenditure', '>=', trim($start))
+        return $builder->where('expenditure_date', '>=', trim($start))
             ->where('expenditure_date', '<=', trim($end));
     }
 }
