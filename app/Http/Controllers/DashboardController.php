@@ -12,7 +12,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->only(['user']);
+        $search = $request->all(['user']);
         $start = date('Y-m-d', strtotime('first day of this month'));
         $end = date('Y-m-d', strtotime('last day of this month'));
 
