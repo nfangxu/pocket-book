@@ -8,7 +8,7 @@
                 <select name="user" lay-filter='users'>
                     <option value="">不限</option>
                     @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        <option value="{{ $user->id }}" {{ request('user') == $user->id ? "selected" : '' }}>{{ $user->name }}</option>
                     @endforeach
                 </select>
             </div>
