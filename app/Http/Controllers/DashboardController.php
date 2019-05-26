@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Pocket;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class DashboardController extends Controller
 {
@@ -43,6 +44,8 @@ class DashboardController extends Controller
             ];
         }
 
-        return view('dashboard', compact(['titles', 'data', 'start', 'end']));
+        $users = User::all();
+
+        return view('dashboard', compact(['titles', 'data', 'start', 'end', 'users']));
     }
 }

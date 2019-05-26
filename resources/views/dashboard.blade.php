@@ -2,6 +2,19 @@
 
 @section('content')
 <div class="container">
+    <div class="row justify-content-start">
+        <form id="users" class="layui-form" action="">
+            <div class="layui-input-inline">
+                <select name="user" lay-filter='users'>
+                    <option value="">不限</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <input type="hidden" name="date" value="{{ $start }}~{{ $end }}">
+        </form>
+    </div>
     <div class="row justify-content-end">
         <div id="dateRange"
             style="height: 38px; line-height: 38px; cursor: pointer; border-bottom: 1px solid #e2e2e2;"></div>
@@ -20,8 +33,13 @@
 <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.min.js"></script>
 <script src="{{ asset('lib/layui/layui.js') }}"></script>
 <script>
-        layui.use(['laydate'], function () {
+        layui.use(['laydate', 'form'], function () {
             let laydate = layui.laydate;
+            let form = layui.form;
+
+            form.on('select(users)', function(data){
+                $('#users').submit();
+            });
 
             laydate.render({
                 elem: '#dateRange'
@@ -29,7 +47,7 @@
                 , value: '{{ $start }} ~ {{ $end }}'
                 , max: 0
                 , done: function (value, date) {
-                    window.location.href = "{{ route('dashboard') }}?date=" + value;
+                    window.location.href = "{{ route('dashboard') }}?user={{ request('user') }}&date=" + value;
                 }
             });
         });
