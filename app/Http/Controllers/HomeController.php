@@ -22,12 +22,27 @@ class HomeController extends Controller
         $pockets = $query->paginate(10);
         $categories = Category::all();
 
-        return view('home', compact(['pockets', 'categories']));
+        $extId = Category::extCategory();
+
+        return view('home', compact(['pockets', 'categories', 'extId']));
     }
 
     public function store(Request $request)
     {
         $data = $request->only(['category', 'comment', 'expenditure', 'expenditure_date', 'is_necessary']);
+
+        /** 自定义类别 Start */
+        $extId = Category::extCategory()[0];
+
+        if ($data['category'] == $extId) {
+            $category = Category::create([
+                'name' => "其他",
+                'ext_name' => $request->input('ext_category'),
+                'comment' => Auth::user()->name . " 添加于 " . now(),
+            ]);
+            $data['category'] = $category->id;
+        }
+        /** 自定义类别 End */
 
         $validator = Validator::make($data, [
             'category' => ['required'],

@@ -11,4 +11,9 @@ class Category extends Model
         'ext_name',
         'comment'
     ];
+
+    public function scopeExtCategory($builder)
+    {
+        return $builder->whereName('其他')->pluck('id');
+    }
 }

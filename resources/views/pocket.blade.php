@@ -18,6 +18,12 @@
                                 </select>
                             </div>
                         </div>
+                        <div id="ext_category" class="form-group row" style="display: none;">
+                                <label for="inputPassword" class="col-sm-3 col-form-label">自定义类别</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="ext_category" class="form-control" placeholder="类别名称">
+                                </div>
+                            </div>
                         <div class="form-group row">
                             <label for="inputPassword" class="col-sm-3 col-form-label">金额</label>
                             <div class="col-sm-9">
@@ -61,6 +67,14 @@
 </div>
 <script>
 $(function (){
+    $('#pocketAddForm select[name=category]').on('change', function (){
+        let id = $(this).children('option:selected').val();
+        if (id == {{ $extId[0] }}) {
+            $('#ext_category').show();
+        } else {
+            $('#ext_category').hide();
+        }
+    });
     $('#pocketAddBtn').on('click', function (v){
         let x = $('#pocketAddForm').serializeArray();
         let data = {};

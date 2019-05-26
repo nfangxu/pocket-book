@@ -12,6 +12,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $search = $request->only(['user']);
         $start = date('Y-m-d', strtotime('first day of this month'));
         $end = date('Y-m-d', strtotime('last day of this month'));
 
@@ -30,6 +31,7 @@ class DashboardController extends Controller
 
         $pockets = Pocket::select(DB::raw('sum(expenditure) as total,category_id'))
             ->datepicker($start, $end)
+            ->search($search)
             ->groupBy('category_id')
             ->get()->pluck('total', 'category_id')->toArray();
 

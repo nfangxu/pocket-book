@@ -26,4 +26,13 @@ class Pocket extends Model
         return $builder->where('expenditure_date', '>=', trim($start))
             ->where('expenditure_date', '<=', trim($end));
     }
+
+    public function scopeSearch(Builder $builder, $search)
+    {
+        if (!is_null($search['user'])) {
+            $builder->whereUserId($search['user']);
+        }
+
+        return $builder;
+    }
 }
