@@ -56,7 +56,7 @@
         // 指定图表的配置项和数据
         var option = {
                 title : {
-                    text: '各类花费统计',
+                    text: '花销饼图: (总花销: ¥ {{ $total }})',
                     subtext: '{{ $start }} ~ {{ $end }}',
                     x:'center'
                 },

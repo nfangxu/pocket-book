@@ -35,6 +35,11 @@ class DashboardController extends Controller
             ->groupBy('category_id')
             ->get()->pluck('total', 'category_id')->toArray();
 
+        $total = Pocket::select(DB::raw('sum(expenditure) as total'))
+            ->datepicker($start, $end)
+            ->search($search)
+            ->pluck('total')->first();
+        
         $titles = [];
         $data = [];
         foreach ($categories as $category) {
@@ -48,6 +53,6 @@ class DashboardController extends Controller
 
         $users = User::all();
 
-        return view('dashboard', compact(['titles', 'data', 'start', 'end', 'users']));
+        return view('dashboard', compact(['titles', 'data', 'start', 'end', 'users', 'total']));
     }
 }
