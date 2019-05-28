@@ -39,15 +39,23 @@ class DashboardController extends Controller
             ->datepicker($start, $end)
             ->search($search)
             ->pluck('total')->first();
-        
+
         $titles = [];
         $data = [];
         foreach ($categories as $category) {
             $name = $category->ext_name ?: $category->name;
             $titles[] = $name;
+
+            $cost = $pockets[$category->id] ?? 0;
+
+            // 过滤掉花费为 0 的分类
+            if (!$cost) {
+                continue;
+            }
+
             $data[] = [
                 'name' => $name,
-                'value' => $pockets[$category->id] ?? 0,
+                'value' => $cost,
             ];
         }
 
