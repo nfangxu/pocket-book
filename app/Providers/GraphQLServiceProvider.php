@@ -7,6 +7,7 @@ use GraphQL;
 use App\GraphQL\Type\UserType;
 use App\GraphQL\Query\UsersQuery;
 use App\GraphQL\Mutation\SignUp;
+use App\GraphQL\Mutation\LoginMutation;
 
 class GraphQLServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,7 @@ class GraphQLServiceProvider extends ServiceProvider
 
     protected $mutations = [
         'signUp' => SignUp::class,
+        'login' => LoginMutation::class,
     ];
 
     public function register()

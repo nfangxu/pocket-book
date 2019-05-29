@@ -9,7 +9,6 @@ use Rebing\GraphQL\Support\SelectFields;
 use App\User;
 use GraphQL;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class SignUp extends Mutation
 {
@@ -59,7 +58,10 @@ class SignUp extends Mutation
         $select = $fields->getSelect();
         $with = $fields->getRelations();
 
-        $user = User::query()->whereEmail($args['email'])->first();
+        $user = User::create([
+            'email' => $args['email'],
+            'password' => $args['password'],
+        ]);
 
         Auth::login($user);
 

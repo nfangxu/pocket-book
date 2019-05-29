@@ -52,7 +52,7 @@ return [
     //
     // 'route_group_attributes' => ['guard' => 'api']
     //
-    'route_group_attributes' => ['web'],
+    'route_group_attributes' => [],
 
     // The name of the default schema used when no argument is provided
     // to GraphQL::schema() or when the route is used without the graphql_schema

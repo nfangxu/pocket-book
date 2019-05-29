@@ -5,6 +5,7 @@ namespace App\GraphQL\Type;
 use Rebing\GraphQL\Support\Type as GraphQLType;
 use App\User;
 use GraphQL\Type\Definition\Type;
+use App\GraphQL\Privacies\IsMe;
 
 class UserType extends GraphQLType
 {
@@ -24,10 +25,12 @@ class UserType extends GraphQLType
             'name' => [
                 'type' => Type::string(),
                 'description' => '用户名称',
+                'privacy'  => IsMe::class,
             ],
             'email' => [
                 'type' => Type::string(),
                 'description' => '用户邮箱',
+                'privacy'  => IsMe::class,
             ],
         ];
     }
