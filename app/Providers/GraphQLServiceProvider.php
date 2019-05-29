@@ -29,10 +29,7 @@ class GraphQLServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        foreach ($this->types as $alias => $type) {
-            GraphQL::addType($type, $alias);
-        }
-
+        GraphQL::addTypes($this->types);
         GraphQL::addSchema('default', [
             'query' => $this->queries,
             'mutation' => $this->mutations,
