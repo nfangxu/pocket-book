@@ -12,7 +12,8 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pocket::latest('id')
+        $query = Pocket::latest('expenditure_date')
+            ->latest('id')
             ->whereUserId(Auth::id());
 
         if (request('category')) {
