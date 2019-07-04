@@ -51,7 +51,7 @@
         </table>
     </div>
     <div class="row justify-content-end">
-        {{ $pockets->appends(request()->get())->links() }}
+        {{ $pockets->appends(request()->all(['category']))->links() }}
     </div>
 </div>
 @endsection
