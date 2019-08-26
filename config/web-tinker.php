@@ -16,7 +16,7 @@ return [
      * By default this package will only run in local development.
      * Do not change this, unless you know what your are doing.
      */
-    'enabled' => true,
+    'enabled' => false,
 
    /*
     * This class can modify the output returned by Tinker. You can replace this with

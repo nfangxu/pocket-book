@@ -13,7 +13,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        // 
     ];
 
     /**
@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('viewWebTinker', function ($user = null) {
-            return $user && in_array($user->email, ["nfangxu@gmail.com"]);
+            return true;
         });
     }
 }

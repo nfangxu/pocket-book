@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Spatie\WebTinker\Http\Controllers\WebTinkerController;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -39,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->webTinkerRoutes();
     }
 
     /**
@@ -69,5 +70,14 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    protected function webTinkerRoutes()
+    {
+        Route::prefix(config('web-tinker.path'))
+            ->middleware(['web', 'auth'])->group(function () {
+                Route::get('/', [WebTinkerController::class, 'index'])->name('web-tinker');
+                Route::post('/', [WebTinkerController::class, 'execute']);
+            });
     }
 }

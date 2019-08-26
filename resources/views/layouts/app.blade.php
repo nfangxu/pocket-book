@@ -35,7 +35,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-                       <li><a class="nav-link" href="{{ route('dashboard') }}">统计面板</a></li>
+                        @auth
+                            <li><a class="nav-link" href="{{ route('dashboard') }}">统计面板</a></li>
+                            <li><a class="nav-link" target="_blank" href="{{ route('web-tinker') }}">命令行</a></li>
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
