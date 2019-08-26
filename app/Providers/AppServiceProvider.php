@@ -24,10 +24,5 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Gate::define('viewWebTinker', function ($user = null) {
-            return $user && in_array($user->email, [
-                "nfangxu@gmail.com",
-            ]);
-        });
     }
 }
