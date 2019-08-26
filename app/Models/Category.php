@@ -12,8 +12,15 @@ class Category extends Model
         'comment'
     ];
 
+    protected $appends = ['description'];
+
     public function scopeExtCategory($builder)
     {
         return $builder->whereName('其他')->pluck('id');
+    }
+
+    public function getDescriptionAttribute()
+    {
+        return $this->ext_name ?: $this->name;
     }
 }
