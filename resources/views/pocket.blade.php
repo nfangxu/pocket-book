@@ -34,7 +34,7 @@
                             <label for="inputPassword" class="col-sm-3 col-form-label">日期</label>
                             <div class="col-sm-9">
                                 <select name="expenditure_date" class="form-control">
-                                    @for($i=0; $i<7; $i++)
+                                    @for($i=0; $i< request('days', 7); $i++)
                                         <option value="{{ date('Y-m-d', strtotime('-'.$i.' days')) }}"
                                         >{{ date('Y-m-d', strtotime('-'.$i.' days')) }}</option>
                                     @endfor
