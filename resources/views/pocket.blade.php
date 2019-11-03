@@ -36,7 +36,9 @@
                                 <select name="expenditure_date" class="form-control">
                                     @for($i=0; $i< request('days', 7); $i++)
                                         <option value="{{ date('Y-m-d', strtotime('-'.$i.' days')) }}"
-                                        >{{ date('Y-m-d', strtotime('-'.$i.' days')) }}</option>
+                                        >{{ date('Y-m-d', strtotime('-'.$i.' days')) }}
+                                        （周{{ ['日','一','二','三','四','五','六']date('w', strtotime('-'.$i.' days')) }}）
+                                        </option>
                                     @endfor
                                 </select>
                             </div>
