@@ -20,32 +20,17 @@ class HomeController extends Controller
             $query->whereCategoryId(request('category'));
         }
 
-        $pockets = $query->paginate(10);
+        $pockets = $query->paginate(15);
         $categories = Category::all();
 
         $extId = Category::extCategory();
 
-        return view('home', compact(['pockets', 'categories', 'extId']));
+        return view('index', compact(['pockets', 'categories', 'extId']));
     }
 
     public function store(Request $request)
     {
-        $data = $request->only(['category', 'comment', 'expenditure', 'expenditure_date', 'is_necessary']);
-
-        $user = Auth::user();
-
-        /** 自定义类别 Start */
-        $extId = Category::extCategory()[0];
-
-        if ($data['category'] == $extId) {
-            $category = Category::create([
-                'name' => "其他",
-                'ext_name' => $request->input('ext_category'),
-                'comment' => ($user ? $user->name : '管理员') . " 添加于 " . now(),
-            ]);
-            $data['category'] = $category->id;
-        }
-        /** 自定义类别 End */
+        $data = $request->all(['category', 'comment', 'expenditure', 'expenditure_date', 'is_necessary']);
 
         $validator = Validator::make($data, [
             'category' => ['required'],
@@ -65,7 +50,6 @@ class HomeController extends Controller
         }
 
         $data['user_id'] = Auth::id();
-
         $data['is_necessary'] = $data['is_necessary'] ? 1 : 0;
         $data['category_id'] = $data['category'];
         $data['comment'] = $data['comment'] ?: "";
