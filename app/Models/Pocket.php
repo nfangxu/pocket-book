@@ -16,6 +16,10 @@ class Pocket extends Model
         'comment',
     ];
 
+    protected $appends = [
+        'category_name',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -34,5 +38,10 @@ class Pocket extends Model
         }
 
         return $builder;
+    }
+
+    public function getCategoryNameAttribute()
+    {
+        return $this->category->ext_name ?: $this->category->name;
     }
 }

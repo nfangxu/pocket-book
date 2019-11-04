@@ -37,7 +37,7 @@ class HomeController extends Controller
             'expenditure' => ['required'],
             'expenditure_date' => ['required'],
         ], [
-            '*.required' =>  ':attribute不能为空',
+            '*.required' => ':attribute不能为空',
         ], [
             'category' => '类别',
             'comment' => '备注',
@@ -57,5 +57,13 @@ class HomeController extends Controller
         Pocket::create($data);
 
         return response()->json(['code' => 0]);
+    }
+
+    public function page(Request $request)
+    {
+        return Pocket::query()
+            ->where('user_id', Auth::id())
+            ->orderBy('expenditure_date', 'desc')
+            ->paginate(15);
     }
 }
