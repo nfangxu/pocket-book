@@ -1,0 +1,35 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+metadata:
+  namespace: default
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
+steps:
+- name: publish
+  image: plugins/docker
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+  settings:
+    username: 
+      from_secret: aliyun_username
+    password: 
+      from_secret: aliyun_password
+    repo: registry-vpc.cn-beijing.aliyuncs.com/nfangxu/pocket
+    registry: registry-vpc.cn-beijing.aliyuncs.com
+    tags: ${DRONE_TAG=latest}
+
+- name: deploy
+  image: kubectl:v1.16.2
+  commands:
+  - sed -i -e 's/__TAG__/${DRONE_TAG=latest}/g' deploy.yml || true
+  - sed -i -e 's/__NAME__/pocket/g' deploy.yml || true
+  - kubectl delete -f deploy.yml || true
+  - kubectl apply -f deploy.yml
