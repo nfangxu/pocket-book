@@ -2,6 +2,11 @@
 
 <head>
     <title>记账本</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://www.layuicdn.com/layui-v2.5.5/css/layui.css">
 </head>
 
@@ -14,7 +19,10 @@
         <form class="layui-form" method="post">
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <input type="text" class="layui-input" name="expenditure_date" id="datepicker" readonly>
+                    <input type="text" class="layui-input"
+                           name="expenditure_date"
+                           id="datepicker"
+                           readonly>
                     @csrf
                 </div>
                 <div class="layui-inline">
@@ -26,13 +34,17 @@
                     </select>
                 </div>
                 <div class="layui-inline">
-                    <input type="number" class="layui-input" name="expenditure" min="0" placeholder="金额"
+                    <input type="number" class="layui-input"
+                           name="expenditure" min="0"
+                           placeholder="金额"
                            autocomplete="off"
                            lay-verify="required">
                 </div>
                 <div class="layui-inline">
-                    <input type="text" class="layui-input" name="comment" placeholder="备注" autocomplete="off"
-                           lay-verify="required">
+                    <input type="text" class="layui-input"
+                           name="comment"
+                           placeholder="备注"
+                           autocomplete="off">
                 </div>
                 <div class="layui-inline">
                     <button class="layui-btn" lay-submit lay-filter="*">提交</button>
@@ -45,25 +57,30 @@
             <table class="layui-table" id="pocketData"></table>
         </div>
         <div class="layui-col-md5 layui-col-offset1">
-            <div id="dashboard" style="width:100%;height:400px;"></div>
+            <div id="dashboard" style="width:100%;height:650px;"></div>
         </div>
     </div>
 </div>
 <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.min.js"></script>
 <script src="https://www.layuicdn.com/layui-v2.5.5/layui.js"></script>
+<script type="text/html" id="tools">
+    <span class="layui-btn layui-btn-xs">编辑</span>
+    <span class="layui-btn layui-btn-xs layui-btn-danger">删除</span>
+</script>
 <script>
     layui.use(['element', 'form', 'laydate', 'table'], function () {
         let element = layui.element
             , form = layui.form
             , $ = layui.$
             , table = layui.table
-            , laydate = layui.laydate;
+            , laydate = layui.laydate
+            , chart = echarts.init(document.getElementById('dashboard'));
 
         laydate.render({
             elem: '#datepicker'
             , value: "{{ date('Y-m-d') }}"
             , showBottom: false
-            , max: 0
+            , max: 1 // 最多只能选明天
         });
 
         table.render({
@@ -78,18 +95,20 @@
                 , {field: 'category_name', title: '分类'}
                 , {field: 'expenditure', title: '金额'}
                 , {field: 'comment', title: '备注'}
+                , {fixed: 'right', title: '操作', width: 120, align: 'left', toolbar: '#tools'}
             ]]
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
-                    "code": 0, //解析接口状态
-                    "msg": 'ok', //解析提示文本
-                    "count": res.total, //解析数据长度
-                    "data": res.data //解析数据列表
+                    "code": 0, // 解析接口状态
+                    "msg": 'ok', // 解析提示文本
+                    "count": res.total, // 解析数据长度
+                    "data": res.data // 解析数据列表
                 };
             }
         });
 
         form.on('submit(*)', function (v) {
+            layer.load(2);
             let data = v.field;
 
             $.ajax({
@@ -97,6 +116,7 @@
                 , data: data
                 , method: 'post'
                 , success: function (r) {
+                    layer.closeAll('loading');
                     if (r.code) {
                         let msg = "";
                         $.each(r.data, function (i, error) {
@@ -111,6 +131,7 @@
                     }
                 }
                 , error: function (e) {
+                    layer.closeAll('loading');
                     layer.msg('网络错误', {icon: 2});
                 }
             });
@@ -118,68 +139,51 @@
             return false;
         });
 
-        let dashboard = echarts.init(document.getElementById('dashboard'));
+        dashboard();
 
-        let option = {
-            legend: {},
-            tooltip: {
-                trigger: 'axis',
-                showContent: false
-            },
-            dataset: {
-                source: [
-                    ['product', '2019-06', '2019-07', '2019-08', '2019-09', '2019-10', '2019-11'],
-                    ['Matcha', 41.1, 30.4, 65.1, 53.3, 83.8, 98.7],
-                    ['Milk', 86.5, 92.1, 85.7, 83.1, 73.4, 55.1],
-                    ['Cheese', 24.1, 67.2, 79.5, 86.4, 65.2, 82.5],
-                    ['Walnut', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1]
-                ]
-            },
-            xAxis: {type: 'category'},
-            yAxis: {gridIndex: 0},
-            grid: {top: '55%'},
-            series: [
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {type: 'line', smooth: true, seriesLayoutBy: 'row'},
-                {
-                    type: 'pie',
-                    id: 'pie',
-                    radius: '30%',
-                    center: ['50%', '25%'],
-                    label: {
-                        formatter: '{b}: {@2012} ({d}%)'
-                    },
-                    encode: {
-                        itemName: 'product',
-                        value: '2012',
-                        tooltip: '2012'
-                    }
+        function dashboard() {
+            $.ajax({
+                url: '{{ route('pocket.chart') }}'
+                , success: function (r) {
+                    chart.showLoading();
+                    dashboardInit(chart, r.legend, r.yAxis, r.data);
+                    chart.hideLoading()
                 }
-            ]
-        };
+            });
+        }
 
-        dashboard.on('updateAxisPointer', function (event) {
-            var xAxisInfo = event.axesInfo[0];
-            if (xAxisInfo) {
-                var dimension = xAxisInfo.value + 1;
-                dashboard.setOption({
-                    series: {
-                        id: 'pie',
-                        label: {
-                            formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-                        },
-                        encode: {
-                            value: dimension,
-                            tooltip: dimension
-                        }
+        function dashboardInit(chart, legend, yAxis, data) {
+            chart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
                     }
-                });
-            }
-        });
-
-        dashboard.setOption(option);
+                },
+                legend: {
+                    data: legend
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'value'
+                    },
+                    {
+                        type: 'value'
+                    }
+                ],
+                yAxis: {
+                    type: 'category',
+                    data: yAxis
+                },
+                series: data
+            });
+        }
     });
 </script>
 </body>

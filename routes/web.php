@@ -19,6 +19,7 @@ Auth::routes(['register' => false]);
 
 Route::middleware('auth')->group(function () {
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::post('/store', 'HomeController@store')->name('pocket.store');
-    Route::get('/page', 'HomeController@page')->name('pocket.page');
+    Route::post('/pocket/store', 'HomeController@store')->name('pocket.store');
+    Route::get('/pocket/page', 'HomeController@page')->name('pocket.page');
+    Route::get('/pocket/chart', 'HomeController@chart')->name('pocket.chart');
 });
