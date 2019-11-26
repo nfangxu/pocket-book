@@ -75,7 +75,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
 spec:
   rules:
-    - host: __NAME__.nfangxu.cn
+    - host: __NAME__.nfangxu.com
       http:
         paths:
           - path: /

@@ -31,5 +31,4 @@ steps:
   commands:
   - sed -i -e 's/__TAG__/${DRONE_TAG=latest}/g' deploy.yml || true
   - sed -i -e 's/__NAME__/pocket/g' deploy.yml || true
-  - kubectl delete -f deploy.yml || true
   - kubectl apply -f deploy.yml
