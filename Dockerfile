@@ -1,11 +1,10 @@
-FROM registry.cn-beijing.aliyuncs.com/nfangxu/laranginx:1.2
+FROM registry-vpc.cn-beijing.aliyuncs.com/nfangxu/docker-for-laravel:1.0
 
 WORKDIR /var/www/html
 
 COPY . .
-RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ && composer install --no-scripts --no-dev
+
+RUN composer install --no-scripts --no-dev
 RUN chown -R www-data /var/www/html/public && chown -R www-data /var/www/html/storage && cp .env.example .env
 
-EXPOSE 443 80
-
-CMD ["/init.sh"]
+CMD ["* * * * * /usr/bin/php /var/www/html/artisan schedule:run >> /dev/null 2>&1"]
