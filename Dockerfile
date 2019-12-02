@@ -1,4 +1,4 @@
-FROM registry-vpc.cn-beijing.aliyuncs.com/nfangxu/docker-for-laravel:1.1
+FROM registry-vpc.cn-beijing.aliyuncs.com/nfangxu/docker-for-laravel:1.3
 
 WORKDIR /var/www/html
 
