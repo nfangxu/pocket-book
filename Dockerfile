@@ -4,8 +4,8 @@ WORKDIR /var/www/html
 
 COPY . .
 
+RUN chown -R www-data /var/www/html/ && cp .env.example .env
 RUN composer install --no-scripts --no-dev
-RUN chown -R www-data /var/www/html/public && chown -R www-data /var/www/html/storage && cp .env.example .env
 
 EXPOSE 443 80
 
