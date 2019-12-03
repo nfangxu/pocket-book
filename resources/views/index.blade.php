@@ -136,6 +136,12 @@
                 }
             });
 
+            // 清空金额和备注
+            $('input[name=expenditure]').val('');
+            $('input[name=comment]').val('');
+
+            dashboard();
+
             return false;
         });
 
