@@ -22,4 +22,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/pocket/store', 'HomeController@store')->name('pocket.store');
     Route::get('/pocket/page', 'HomeController@page')->name('pocket.page');
     Route::get('/pocket/chart', 'HomeController@chart')->name('pocket.chart');
+    Route::post('/pocket/update', 'HomeController@update')->name('pocket.update');
 });

@@ -132,4 +132,16 @@ class HomeController extends Controller
             'data' => $data,
         ];
     }
+
+    public function update(Request $request)
+    {
+        $data = $request->all([
+            'id',
+            'expenditure_date'
+        ]);
+
+        Pocket::whereId($data['id'])->update(['expenditure_date' => $data['expenditure_date']]);
+
+        return $data;
+    }
 }

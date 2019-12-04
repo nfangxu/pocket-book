@@ -11,64 +11,55 @@
 </head>
 
 <body>
-<div class="layui-container">
-    <div class="layui-row">
-        <blockquote class="layui-elem-quote">记账本</blockquote>
-    </div>
-    <div class="layui-row">
-        <form class="layui-form" method="post">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <input type="text" class="layui-input"
-                           name="expenditure_date"
-                           id="datepicker"
-                           readonly>
-                    @csrf
-                </div>
-                <div class="layui-inline">
-                    <select name="category" lay-verify="required">
-                        <option value="">分类</option>
-                        @foreach($categories as $category)
+    <div class="layui-container">
+        <div class="layui-row">
+            <blockquote class="layui-elem-quote">记账本</blockquote>
+        </div>
+        <div class="layui-row">
+            <form class="layui-form" method="post">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" name="expenditure_date" id="datepicker" readonly>
+                        @csrf
+                    </div>
+                    <div class="layui-inline">
+                        <select name="category" lay-verify="required">
+                            <option value="">分类</option>
+                            @foreach($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->ext_name ?: $category->name }}</option>
-                        @endforeach
-                    </select>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="layui-inline">
+                        <input type="number" class="layui-input" name="expenditure" min="0" placeholder="金额"
+                            autocomplete="off" lay-verify="required">
+                    </div>
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" name="comment" placeholder="备注" autocomplete="off">
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit lay-filter="*">提交</button>
+                    </div>
                 </div>
-                <div class="layui-inline">
-                    <input type="number" class="layui-input"
-                           name="expenditure" min="0"
-                           placeholder="金额"
-                           autocomplete="off"
-                           lay-verify="required">
-                </div>
-                <div class="layui-inline">
-                    <input type="text" class="layui-input"
-                           name="comment"
-                           placeholder="备注"
-                           autocomplete="off">
-                </div>
-                <div class="layui-inline">
-                    <button class="layui-btn" lay-submit lay-filter="*">提交</button>
-                </div>
+            </form>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-md7">
+                <table class="layui-table" id="pocketData" lay-filter="pocketData"></table>
             </div>
-        </form>
-    </div>
-    <div class="layui-row">
-        <div class="layui-col-md7">
-            <table class="layui-table" id="pocketData"></table>
-        </div>
-        <div class="layui-col-md5 layui-col-offset1">
-            <div id="dashboard" style="width:100%;height:650px;"></div>
+            <div class="layui-col-md5 layui-col-offset1">
+                <div id="dashboard" style="width:100%;height:650px;"></div>
+            </div>
         </div>
     </div>
-</div>
-<script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.min.js"></script>
-<script src="https://www.layuicdn.com/layui-v2.5.5/layui.js"></script>
-<script type="text/html" id="tools">
-    <span class="layui-btn layui-btn-xs">编辑</span>
-    <span class="layui-btn layui-btn-xs layui-btn-danger">删除</span>
-</script>
-<script>
-    layui.use(['element', 'form', 'laydate', 'table'], function () {
+    <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.min.js"></script>
+    <script src="https://www.layuicdn.com/layui-v2.5.5/layui.js"></script>
+    <script type="text/html" id="tools">
+        <span class="layui-btn layui-btn-xs">编辑</span>
+        <span class="layui-btn layui-btn-xs layui-btn-danger">删除</span>
+    </script>
+    <script>
+        layui.use(['element', 'form', 'laydate', 'table'], function () {
         let element = layui.element
             , form = layui.form
             , $ = layui.$
@@ -91,7 +82,7 @@
             , limit: 15
             , limits: [15, 50]
             , cols: [[ //表头
-                {field: 'expenditure_date', title: '日期'}
+                {field: 'expenditure_date', title: '日期', edit: 'text'}
                 , {field: 'category_name', title: '分类'}
                 , {field: 'expenditure', title: '金额'}
                 , {field: 'comment', title: '备注'}
@@ -105,6 +96,20 @@
                     "data": res.data // 解析数据列表
                 };
             }
+        });
+
+        table.on('edit(pocketData)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            console.log(obj.value); //得到修改后的值
+            console.log(obj.field); //当前编辑的字段名
+            console.log(obj.data); //所在行的所有相关数据 
+            $.post('{{ route("pocket.update") }}', {
+                _token: '{{ csrf_token() }}'
+                , id: obj.data.id
+                , expenditure_date: obj.value
+            }, function (r) {
+                table.reload('pocketData');
+                dashboard();
+            });
         });
 
         form.on('submit(*)', function (v) {
@@ -191,7 +196,7 @@
             });
         }
     });
-</script>
+    </script>
 </body>
 
 </html>
