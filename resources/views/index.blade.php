@@ -54,10 +54,6 @@
     </div>
     <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.min.js"></script>
     <script src="https://www.layuicdn.com/layui-v2.5.5/layui.js"></script>
-    <script type="text/html" id="tools">
-        <span class="layui-btn layui-btn-xs">编辑</span>
-        <span class="layui-btn layui-btn-xs layui-btn-danger">删除</span>
-    </script>
     <script>
         layui.use(['element', 'form', 'laydate', 'table'], function () {
         let element = layui.element
@@ -86,7 +82,6 @@
                 , {field: 'category_name', title: '分类'}
                 , {field: 'expenditure', title: '金额'}
                 , {field: 'comment', title: '备注'}
-                , {fixed: 'right', title: '操作', width: 120, align: 'left', toolbar: '#tools'}
             ]]
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
