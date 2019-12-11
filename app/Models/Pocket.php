@@ -33,9 +33,11 @@ class Pocket extends Model
 
     public function scopeSearch(Builder $builder, $search)
     {
-        if (!is_null($search['user'])) {
-            $builder->whereUserId($search['user']);
-        }
+        empty($search['category'] ?? null)
+            ?: $builder->whereCategoryId($search['category']);
+
+        empty($search['user'] ?? null)
+            ?: $builder->whereUserId($search['user']);
 
         return $builder;
     }

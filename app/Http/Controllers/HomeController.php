@@ -17,7 +17,20 @@ class HomeController extends Controller
     {
         $categories = Category::all();
 
-        return view('index', compact('categories'));
+        $datepicker = $request->input('datepicker', date('Y-m-01') . ' ~ ' . date('Y-m-t'));
+
+        $category = $request->input('category');
+
+        $start = explode('~', $datepicker)[0];
+        $stop = explode('~', $datepicker)[1];
+
+        $total = Pocket::datepicker(date('Y-m-1'), date('Y-m-t'))
+            ->search([
+                'category' => $category,
+            ])
+            ->sum('expenditure');
+
+        return view('index', compact('categories', 'total', 'datepicker', 'category'));
     }
 
     public function store(Request $request)

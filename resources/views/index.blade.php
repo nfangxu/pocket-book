@@ -11,82 +11,84 @@
 </head>
 
 <body>
-    <div class="layui-fluid"  style="position: absolute; left: 0; top: 0; width: 100%">
-            <div class="layui-container" style="background-color: #fff; margin-top: 12px;">
+    <div class="layui-fluid" style="position: absolute; left: 0; top: 0; width: 100%">
+        <div class="layui-container" style="background-color: #fff; margin-top: 12px;">
+            <div class="layui-row">
+                <blockquote class="layui-elem-quote">
                     <div class="layui-row">
-                        <blockquote class="layui-elem-quote">
-                            <div class="layui-row">
-                                <div class="layui-col-md2">
-                                    记账本
-                                </div>
-                                <div class="layui-col-md10">
-                                    <h1>
-                                        当月限额: ¥ 4000.00, 已使用: ¥ <span id="used" style="color: red">3874.87</span>
-                                    </h1>
-                                </div>
-                            </div>
-                        </blockquote>
+                        <div class="layui-col-md2">
+                            记账本
+                        </div>
+                        <div class="layui-col-md10">
+                            <h1>
+                                当月限额: ¥ 4000.00, 已使用: ¥ <span id="used" style="color: red">{{ $total ?? 0}}</span>
+                            </h1>
+                        </div>
                     </div>
-                    <div class="layui-row">
-                        <form class="layui-form" method="post">
-                            <div class="layui-form-item">
-                                <div class="layui-inline">
-                                    <input type="text" class="layui-input" name="expenditure_date" id="datepicker" readonly>
-                                    @csrf
-                                </div>
-                                <div class="layui-inline">
-                                    <select name="category" lay-verify="required">
-                                        <option value="">分类</option>
-                                        @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->ext_name ?: $category->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="layui-inline">
-                                    <input type="number" class="layui-input" name="expenditure" min="0" placeholder="金额"
-                                        autocomplete="off" lay-verify="required">
-                                </div>
-                                <div class="layui-inline">
-                                    <input type="text" class="layui-input" name="comment" placeholder="备注" autocomplete="off">
-                                </div>
-                                <div class="layui-inline">
-                                    <button class="layui-btn" lay-submit lay-filter="*">提交</button>
-                                </div>
-                            </div>
-                        </form>
+                </blockquote>
+            </div>
+            <div class="layui-row">
+                <form class="layui-form" method="post">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <input type="text" class="layui-input" name="expenditure_date" id="datepicker" readonly>
+                            @csrf
+                        </div>
+                        <div class="layui-inline">
+                            <select name="category" lay-verify="required">
+                                <option value="">分类</option>
+                                @foreach($categories as $v)
+                                <option value="{{ $v->id }}">{{ $v->ext_name ?: $v->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="layui-inline">
+                            <input type="number" class="layui-input" name="expenditure" min="0" placeholder="金额"
+                                autocomplete="off" lay-verify="required">
+                        </div>
+                        <div class="layui-inline">
+                            <input type="text" class="layui-input" name="comment" placeholder="备注" autocomplete="off">
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn" lay-submit lay-filter="*">提交</button>
+                        </div>
                     </div>
-                    <hr>
+                </form>
+            </div>
+            <hr>
+            <div class="layui-row">
+                <div class="layui-col-md7">
                     <div class="layui-row">
-                        <div class="layui-col-md7">
-                            <div class="layui-row">
-                                <div class="layui-form">
-                                    <label class="layui-form-label" style="width: 36px;">筛选</label>
-                                    <div class="layui-input-inline">
-                                        <input name="datepicker" id="search-datepicker" class="layui-input" style="width: 180px"
-                                            readonly>
-                                    </div>
-                                    <div class="layui-input-inline">
-                                        <select name="search-category">
-                                            <option value="">分类</option>
-                                            @foreach($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->ext_name ?: $category->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                        <div class="layui-form">
+                            <label class="layui-form-label" style="width: 36px;">筛选</label>
+                            <div class="layui-input-inline">
+                                <div id="search-datepicker" class="layui-input"
+                                    style="line-height: 38px; width: 185px;"></div>
+                                <input type="hidden" name="datepicker" value="{{ $datepicker }}">
                             </div>
-                            <div class="layui-row">
-                                <table class="layui-table" id="pocketData" lay-filter="pocketData"></table>
+                            <div class="layui-input-inline">
+                                <select name="search-category" lay-filter="search-category">
+                                    <option value="">分类</option>
+                                    @foreach($categories as $v)
+                                    <option value="{{ $v->id }}" 
+                                        {{ ($v->id == $category) ? 'selected' : '' }}
+                                        >{{ $v->ext_name ?: $v->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <div class="layui-col-md5 layui-col-offset1">
-                            <div id="dashboard" style="width:100%;height:650px;"></div>
-                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <table class="layui-table" id="pocketData" lay-filter="pocketData"></table>
                     </div>
                 </div>
+                <div class="layui-col-md5 layui-col-offset1">
+                    <div id="dashboard" style="width:100%;height:650px;"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
     <script src="{{ asset("js/jquery-3.4.1.min.js") }}" charset="utf-8"></script>
     <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.min.js"></script>
     <script src="https://www.layuicdn.com/layui-v2.5.5/layui.js"></script>
@@ -117,9 +119,17 @@
 
             laydate.render({
                 elem: '#search-datepicker'
-                , value: "2019-12-01 ~ 2019-12-04"
+                , value: "{{ $datepicker }}"
                 , range: "~"
                 , max: 0 // 最多只能选明天
+                , done: function (v) {
+                    $('input[name=datepicker]').val(v);
+                    search();
+                }
+            });
+
+            form.on('select(search-category)', function(data){
+                search();
             });
             
             table.render({
@@ -198,6 +208,16 @@
             });
 
             dashboard();
+
+            function search()
+            {
+                let v = {
+                    datepicker: $('input[name=datepicker]').val(),
+                    category: $('select[name=search-category] option:selected').val()
+                };
+
+                window.location.href = '?datepicker='+v.datepicker+'&category='+v.category;
+            }
 
             function dashboard() {
                 $.ajax({
