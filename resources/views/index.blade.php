@@ -70,8 +70,7 @@
                                 <select name="search-category" lay-filter="search-category">
                                     <option value="">分类</option>
                                     @foreach($categories as $v)
-                                    <option value="{{ $v->id }}" 
-                                        {{ ($v->id == $category) ? 'selected' : '' }}
+                                    <option value="{{ $v->id }}" {{ ($v->id == $category) ? 'selected' : '' }}
                                         >{{ $v->ext_name ?: $v->name }}</option>
                                     @endforeach
                                 </select>
@@ -137,6 +136,10 @@
                 , id: 'pocketData'
                 , url: '{{ route("pocket.page") }}' //数据接口
                 , page: true //开启分页
+                , where: {
+                    category: '{{ $category }}',
+                    datepicker: '{{ $datepicker }}'
+                }
                 , limit: 15
                 , limits: [15, 50]
                 , cols: [[ //表头
@@ -209,14 +212,17 @@
 
             dashboard();
 
-            function search()
-            {
-                let v = {
+            function search() {
+                let v = searchData();
+
+                window.location.href = '?datepicker='+v.datepicker+'&category='+v.category;
+            }
+
+            function searchData() {
+                return {
                     datepicker: $('input[name=datepicker]').val(),
                     category: $('select[name=search-category] option:selected').val()
                 };
-
-                window.location.href = '?datepicker='+v.datepicker+'&category='+v.category;
             }
 
             function dashboard() {

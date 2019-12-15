@@ -17,18 +17,9 @@ class HomeController extends Controller
     {
         $categories = Category::all();
 
-        $datepicker = $request->input('datepicker', date('Y-m-01') . ' ~ ' . date('Y-m-t'));
+        [$category, $start, $stop, $datepicker] = $this->params($request);
 
-        $category = $request->input('category');
-
-        $start = explode('~', $datepicker)[0];
-        $stop = explode('~', $datepicker)[1];
-
-        $total = Pocket::datepicker(date('Y-m-1'), date('Y-m-t'))
-            ->search([
-                'category' => $category,
-            ])
-            ->sum('expenditure');
+        $total = Pocket::datepicker($start, $stop)->search(['category' => $category])->sum('expenditure');
 
         return view('index', compact('categories', 'total', 'datepicker', 'category'));
     }
@@ -66,37 +57,39 @@ class HomeController extends Controller
 
     public function page(Request $request)
     {
+        [$category, $start, $stop, $datepicker] = $this->params($request);
+
+        $limit = $request->input('limit', 15);
+
         return Pocket::query()
-            ->where('user_id', Auth::id())
+            ->datepicker($start, $stop)
+            ->search(['category' => $category, 'user' => Auth::id()])
             ->orderByDesc('expenditure_date')
             ->orderByDesc('id')
-            ->paginate(15);
+            ->paginate($limit);
     }
 
-    public function chart()
+    public function chart(Request $request)
     {
-        $year = now()->format('Y');
-        $month = now()->format('m');
-        $last = now()->format('d');
-
-        $start = Carbon::create($year, $month, 1)->format('Y-m-d');
-        $end = Carbon::create($year, $month, $last)->format('Y-m-d');
+        [$categoryId, $start, $stop, $datepicker] = $this->params($request);
 
         $category = Pocket::query()
-            ->datepicker($start, $end)
+            ->datepicker($start, $stop)
+            ->search(['category' => $categoryId])
             ->groupBy('category_id')
             ->orderByDesc('expenditure')
             ->get(['category_id', DB::raw('sum(expenditure) as expenditure')]);
 
         $pockets = Pocket::query()
+            ->datepicker($start, $stop)
+            ->search(['category' => $categoryId])
             ->groupBy('expenditure_date')
-            ->datepicker($start, $end)
             ->get(['expenditure_date', DB::raw('sum(expenditure) as expenditure')])
             ->pluck('expenditure', 'expenditure_date')->toArray();
 
         $legend = $category->pluck('category_name');
 
-        $dates = T::dates($start, $end);
+        $dates = T::dates($start, $stop);
 
         $data = [
             [
@@ -128,7 +121,7 @@ class HomeController extends Controller
                 // 总计里面有数据再去数据库里查, 没有直接赋值给 0
                 if (isset($pockets[$date])) {
                     $tmp['data'][] = Pocket::query()
-                        ->datepicker($start, $end)
+                        ->datepicker($start, $stop)
                         ->where('category_id', $item->category_id)
                         ->where('expenditure_date', $date)->sum('expenditure');
                 } else {
@@ -156,5 +149,22 @@ class HomeController extends Controller
         Pocket::whereId($data['id'])->update(['expenditure_date' => $data['expenditure_date']]);
 
         return $data;
+    }
+
+    protected function params($request)
+    {
+        $datepicker = $request->input('datepicker', date('Y-m-01') . ' ~ ' . date('Y-m-t'));
+
+        $category = $request->input('category');
+
+        $start = trim(explode('~', $datepicker)[0]);
+        $stop = trim(explode('~', $datepicker)[1]);
+
+        if ($stop > now()->format('Y-m-d')) {
+            $stop = now()->format('Y-m-d');
+            $datepicker = "{$start} ~ {$stop}";
+        }
+
+        return [$category, $start, $stop, $datepicker];
     }
 }
